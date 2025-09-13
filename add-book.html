@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add a New Book</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/taffydb/taffy-min.min.js"></script>
+    <script src="js/global-taffy-sync.js" defer></script>
+  </head>
+  <body>
+    <header class="container">
+      <nav>
+        <ul>
+          <li><a href="index.html">Dashboard</a></li>
+          <li><a href="category.html">Category</a></li>
+          <li><a href="rating.html">Ratings</a></li>
+          <li><a href="likes.html">Likes</a></li>
+          <li><a href="add-book.html">Add Book</a></li>
+        </ul>
+      </nav>
+      <hgroup>
+        <h1>Add a New Book</h1>
+      </hgroup>
+    </header>
+    <main class="container">
+      <section>
+        <input type="text" placeholder="Title" id="bookTitle" />
+        <input type="text" placeholder="Description" id="bookDescription" />
+        <select id="categorySelect">
+          <option>Fiction</option>
+          <option>Self-Help</option>
+          <option>Science</option>
+          <option>Other</option>
+        </select>
+        <input type="text" placeholder="Cover Image URL" id="bookCoverUrl" />
+        <fieldset>
+          <legend>Select Rating</legend>
+          <input type="radio" id="one" name="rating" value="1" checked />
+          <label for="one">1</label>
+          <input type="radio" id="two" name="rating" value="2" />
+          <label for="two">2</label>
+          <input type="radio" id="three" name="rating" value="3" />
+          <label for="three">3</label>
+          <input type="radio" id="four" name="rating" value="4" />
+          <label for="four">4</label>
+          <input type="radio" id="five" name="rating" value="5" />
+          <label for="five">5</label>
+        </fieldset>
+
+        <button id="addBookBtn">Add Book</button>
+        <p id="showBookMessage"></p>
+      </section>
+    </main>
+    <footer class="container neog-footer">
+      <small>
+        go from zero to hero at full stack development with
+        <a href="https://neog.camp">neog.camp</a>
+      </small>
+    </footer>
+    <script>
+      const addBookBtn = document.getElementById("addBookBtn");
+
+      function getNextBookId() {
+        const newId = bookShelfDB().get().length + 1;
+        return newId;
+      }
+
+      function handleAddBook() {
+        const titleElement = document.getElementById("bookTitle");
+        const descriptionElement = document.getElementById("bookDescription");
+        const categoryElement = document.getElementById("categorySelect");
+        const coverUrlElement = document.getElementById("bookCoverUrl");
+        const ratingElement = document.querySelector(
+          "input[name=rating]:checked"
+        );
+        const messageElement = document.getElementById("showBookMessage");
+
+        const title = titleElement.value;
+        const description = descriptionElement.value;
+        const category = categoryElement.value;
+        const coverUrl = coverUrlElement.value;
+        const rating = ratingElement.value;
+
+        if (!title || !description || !category || !coverUrl || !rating) {
+          messageElement.innerHTML = `<p class="top-space-style">Please fill all the fields correctly.</p>`;
+          return;
+        }
+
+        const newBook = {
+          book_id: getNextBookId(),
+          title,
+          description,
+          category,
+          cover_url: coverUrl,
+          rating,
+          likes: 0,
+          created_at: new Date(),
+        };
+
+        bookShelfDB.insert(newBook);
+
+        messageElement.innerHTML = `<p class="top-space-style">Book added successfully.</p>`;
+
+        // Clear all inputs
+        titleElement.value = "";
+        descriptionElement.value = "";
+        categoryElement.value = "";
+        coverUrlElement.value = "";
+        ratingElement.value = "";
+      }
+
+      addBookBtn.addEventListener("click", handleAddBook);
+    </script>
+  </body>
+</html>
